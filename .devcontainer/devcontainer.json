@@ -1,0 +1,26 @@
+{
+    "name": "Classroom (Backend)",
+    "dockerComposeFile": [
+      "docker-compose.yml"
+    ],
+    "service": "backend",
+    "workspaceFolder": "/akd-studios/classroom/backend",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "dbaeumer.vscode-eslint",
+          "christian-kohler.path-intellisense",
+          "mikestead.dotenv",
+          "steoates.autoimport",
+          "eamodio.gitlens",
+          "github.vscode-pull-request-github",
+          "orta.vscode-jest",
+          "howardzuo.vscode-npm-dependency",
+          "aaron-bond.better-comments",
+          "stackbreak.comment-divider",
+          "bierner.markdown-mermaid",
+          "yzhang.markdown-all-in-one"
+        ]
+      }
+    }
+  }
