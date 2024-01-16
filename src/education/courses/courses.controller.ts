@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe, DefaultValuePipe, ParseBoolPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -18,19 +18,19 @@ export class CoursesController {
   @Get()
   @ApiQuery({ name: "title", type: String, description: "A parameter. Optional", required: false })
   @ApiQuery({ name: "page",  type: Number, description: "A parameter. Optional", required: false })
-  find(
+  async find(
     @Query('title') title?: string,
     @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number = 11,
   ) {
     console.log(title, page)
-    return this.coursesService.findAll();
+    return await this.coursesService.findAll();
   }
 
   @Get(':id')
   findOne(
     @Param('id') id: string
   ) {
-    return this.coursesService.findOne(+id);
+    return this.coursesService.findOne(id);
   }
 
   @Patch(':id')

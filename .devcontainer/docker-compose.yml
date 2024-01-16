@@ -12,10 +12,27 @@ services:
         - GITHUB_TOKEN=${GITHUB_PAT_TOKEN}
     expose:
       - 3000
+    depends_on:
+      - database
     networks:
       - classroom
     volumes:
       - ..:/akd-studios/classroom/backend
+
+  database:
+    image: postgres:16.1-bookworm
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    volumes:
+      - ./.data:/var/lib/postgresql/data
+    networks:
+      - classroom
+    environment:
+      - POSTGRES_USER=classroom
+      - POSTGRES_PASSWORD=classroom
+      - POSTGRES_DB=classroom
 
 networks:
   classroom:

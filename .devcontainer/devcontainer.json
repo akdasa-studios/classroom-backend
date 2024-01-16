@@ -4,6 +4,7 @@
       "docker-compose.yml"
     ],
     "service": "backend",
+    "runServices": ["database"],
     "workspaceFolder": "/akd-studios/classroom/backend",
     "customizations": {
       "vscode": {
