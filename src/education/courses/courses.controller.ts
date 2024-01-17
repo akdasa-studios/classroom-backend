@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiOkPaginatedResponse, ApiPaginationQuery, Paginate, PaginateQuery, Paginated } from 'nestjs-paginate'
+import { CoursePaginateConfig } from './course.paginate'
 import { CoursesService } from './courses.service'
-import { CourseDto, CreateCourseDto, FindCourseDto, FromEntity, UpdateCourseDto } from './dto'
-import { ApiOkResponse } from '@nestjs/swagger'
-
+import { CreateCourseDto, UpdateCourseDto } from './dto'
+import { Course } from './entities/course.entity'
 
 @Controller('courses')
 export class CoursesController {
@@ -18,17 +19,12 @@ export class CoursesController {
   }
 
   @Get()
-  @ApiOkResponse({
-    description: 'The course records',
-    type: CourseDto,
-    isArray: true
-  })
-  async find(
-    @Query() query: FindCourseDto,
-  ): Promise<CourseDto[]> {
-    return FromEntity(
-      await this.coursesService.findByTitle(query.title)
-    )
+  @ApiOkPaginatedResponse(Course, CoursePaginateConfig)
+  @ApiPaginationQuery(CoursePaginateConfig)
+  public async findAll(
+    @Paginate() query: PaginateQuery
+  ): Promise<Paginated<Course>> {
+    return await this.coursesService.findAll(query)
   }
 
   @Get(':id')

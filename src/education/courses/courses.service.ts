@@ -4,6 +4,8 @@ import { UpdateCourseDto } from './dto/update-course.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Course } from './entities/course.entity'
 import { Raw, Repository } from 'typeorm'
+import { PaginateQuery, Paginated, paginate } from 'nestjs-paginate'
+import { CoursePaginateConfig } from './course.paginate'
 
 @Injectable()
 export class CoursesService {
@@ -16,8 +18,11 @@ export class CoursesService {
     return 'This action adds a new course'
   }
 
-  async findAll() {
-    return await this.coursesRepository.find()
+  public async findAll(
+    query: PaginateQuery
+  ): Promise<Paginated<Course>> {
+    return await paginate(
+      query, this.coursesRepository, CoursePaginateConfig)
   }
 
   findOne(id: string) {
