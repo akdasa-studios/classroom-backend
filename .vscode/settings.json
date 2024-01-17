@@ -5,10 +5,7 @@
   "files.exclude": {
     "**/.git": true,
     "node_modules/": true,
-  },
-  "explorer.fileNesting.enabled": false,
-  "explorer.fileNesting.patterns": {
-    "*.vue": "${capture}ViewModel.ts"
+    "dist": true
   },
   /* -------------------------------------------------------------------------- */
   /*                                   linter                                   */
@@ -19,7 +16,6 @@
   "eslint.validate": [
     "javascript",
     "typescript",
-    "vue"
   ],
   /* -------------------------------------------------------------------------- */
   /*                                    tests                                   */
