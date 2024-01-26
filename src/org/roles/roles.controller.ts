@@ -1,9 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiOkPaginatedResponse, ApiPaginationQuery, Paginate, PaginateQuery, Paginated } from 'nestjs-paginate'
-import { RolePaginateConfig } from './role.paginate'
+import { RolePaginateConfig } from './roles.paginate'
 import { RolesService } from './roles.service'
-import { CreateRoleDto, UpdateRoleDto } from './dto'
-import { Role } from './entities/role.entity'
+import { Role } from './roles.entity'
+import { CreateRoleDto } from './roles.dto.create'
+import { UpdateRoleDto } from './roles.dto.update'
 
 @Controller('roles')
 export class RolesController {

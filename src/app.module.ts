@@ -3,8 +3,8 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { OrganizationModule } from './org/organization.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Course } from './org/courses/entities/course.entity'
-import { Role } from './org/roles/entities/role.entity'
+import { Course } from './edu/courses/entities/course.entity'
+import { Role } from './org/roles/roles.entity'
 
 
 @Module({

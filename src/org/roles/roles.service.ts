@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { CreateRoleDto } from './dto/create-role.dto'
-import { UpdateRoleDto } from './dto/update-role.dto'
+import { CreateRoleDto } from './roles.dto.create'
+import { UpdateRoleDto } from './roles.dto.update'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Role } from './entities/role.entity'
+import { Role } from './roles.entity'
 import { Repository } from 'typeorm'
 import { PaginateQuery, Paginated, paginate } from 'nestjs-paginate'
-import { RolePaginateConfig } from './role.paginate'
+import { RolePaginateConfig } from './roles.paginate'
 
 @Injectable()
 export class RolesService {
