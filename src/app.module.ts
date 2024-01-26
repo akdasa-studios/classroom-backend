@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { EducationModule } from './education/education.module'
+import { OrganizationModule } from './org/organization.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Course } from './education/courses/entities/course.entity'
-import { Role } from './education/roles/entities/role.entity'
+import { Course } from './org/courses/entities/course.entity'
+import { Role } from './org/roles/entities/role.entity'
 
 
 @Module({
   imports: [
-    EducationModule,
+    OrganizationModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'database',

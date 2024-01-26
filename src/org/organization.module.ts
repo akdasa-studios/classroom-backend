@@ -5,4 +5,4 @@ import { RolesModule } from './roles/roles.module'
 @Module({
   imports: [CoursesModule, RolesModule],
 })
-export class EducationModule {}
+export class OrganizationModule {}
