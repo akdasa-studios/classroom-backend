@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { EducationModule } from './education/education.module';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { EducationModule } from './education/education.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Course } from './education/courses/entities/course.entity';
+import { Course } from './education/courses/entities/course.entity'
+import { Role } from './education/roles/entities/role.entity'
 
 
 @Module({
@@ -16,7 +17,7 @@ import { Course } from './education/courses/entities/course.entity';
       username: 'classroom',
       password: 'classroom',
       database: 'classroom',
-      entities: [Course],
+      entities: [Course, Role],
       // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
       synchronize: true,
     }),
