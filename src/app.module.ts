@@ -5,6 +5,7 @@ import { OrganizationModule } from './org/organization.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Course } from './edu/courses/entities/course.entity'
 import { Role } from './org/roles/roles.entity'
+import { User } from './org/users/users.entity'
 
 
 @Module({
@@ -17,7 +18,7 @@ import { Role } from './org/roles/roles.entity'
       username: 'classroom',
       password: 'classroom',
       database: 'classroom',
-      entities: [Course, Role],
+      entities: [Course, Role, User],
       // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
       synchronize: true,
     }),
