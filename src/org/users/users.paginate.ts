@@ -7,7 +7,7 @@ export const UserPaginateConfig: PaginateConfig<User> = {
   nullSort: 'last',
   defaultSortBy: [['name', 'DESC']],
   searchableColumns: ['name'],
-  select: ['id', 'name', 'roles.id', 'roles.permissions', 'roles.name'],
+  select: ['id', 'name', 'status', 'email', 'title', 'department', 'avatarUrl', 'roles.id'],
   filterableColumns: {
     name: [FilterOperator.EQ, FilterOperator.ILIKE, FilterSuffix.NOT],
   },
