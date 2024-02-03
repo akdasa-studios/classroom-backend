@@ -21,7 +21,9 @@ export class User {
   })
   public status: UserStatus
 
-  @ManyToMany(() => Role)
+  @ManyToMany(() => Role, {
+    eager: true,
+  })
   @JoinTable({ name: 'user_roles'})
   roles: Role[]
 

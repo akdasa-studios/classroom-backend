@@ -3,7 +3,7 @@ import { CreateRoleDto } from './roles.dto.create'
 import { UpdateRoleDto } from './roles.dto.update'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Role } from './roles.entity'
-import { Repository } from 'typeorm'
+import { FindManyOptions, In, Repository } from 'typeorm'
 import { PaginateQuery, Paginated, paginate } from 'nestjs-paginate'
 import { RolePaginateConfig } from './roles.paginate'
 
@@ -29,6 +29,10 @@ export class RolesService {
 
   findOne(id: string) {
     return this.coursesRepository.findOneBy({id})
+  }
+
+  async findMany(id: string[]) {
+    return await this.coursesRepository.find({ where: { id: In([...id || []]) } })
   }
 
 

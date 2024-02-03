@@ -6,10 +6,11 @@ import { RolesService } from './roles/roles.service'
 import { UsersController } from './users/users.controller'
 import { User } from './users/users.entity'
 import { UsersService } from './users/users.service'
+import { IsRolesExist } from './validator'
 
 @Module({
   imports: [TypeOrmModule.forFeature([Role, User])],
   controllers: [RolesController, UsersController],
-  providers: [RolesService, UsersService],
+  providers: [IsRolesExist, RolesService, UsersService],
 })
 export class OrganizationModule {}
