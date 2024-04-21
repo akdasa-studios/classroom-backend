@@ -1,46 +1,35 @@
 import { Injectable } from '@nestjs/common'
-import { CreateRoleDto } from './roles.dto.create'
-import { UpdateRoleDto } from './roles.dto.update'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Role } from './roles.entity'
 import { FindManyOptions, In, Repository } from 'typeorm'
-import { PaginateQuery, Paginated, paginate } from 'nestjs-paginate'
-import { RolePaginateConfig } from './roles.paginate'
 
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectRepository(Role)
-    private coursesRepository: Repository<Role>,
+    @InjectRepository(Role) private rolesRepository: Repository<Role>,
   ) {}
 
-  async create(createCourseDto: CreateRoleDto) {
-    const result = await this.coursesRepository.save([createCourseDto])
-    console.log(result)
-
+  async create(request: Partial<Role>): Promise<Role> {
+    return await this.rolesRepository.save([request])[0]
   }
 
-  public async findAll(
-    query: PaginateQuery
-  ): Promise<Paginated<Role>> {
-    return await paginate(
-      query, this.coursesRepository, RolePaginateConfig)
+  async findOne(id: string) {
+    return await this.rolesRepository.findOneBy({id})
   }
 
-  findOne(id: string) {
-    return this.coursesRepository.findOneBy({id})
+  async findAll() {
+    return await this.rolesRepository.find()
   }
 
   async findMany(id: string[]) {
-    return await this.coursesRepository.find({ where: { id: In([...id || []]) } })
+    return await this.rolesRepository.find({ where: { id: In([...id || []]) } })
   }
 
-
-  update(id: number, updateCourseDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} role`
-  }
+  // update(id: string, updateCourseDto: UpdateRoleDto) {
+  //   return `This action updates a #${id} role`
+  // }
+  //
+  // remove(id: number) {
+  //   return `This action removes a #${id} role`
+  // }
 }
