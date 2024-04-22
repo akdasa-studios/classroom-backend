@@ -1,7 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse } from '@nestjs/swagger'
 import { RolesService } from './roles.service'
-import { CreateRoleRequest, CreateRoleResponse, GetRoleResponse } from './roles.protocol'
+import { CreateRoleRequest, CreateRoleResponse, GetRoleResponse, GetRolesResponse, UpdateRoleRequest, UpdateRoleResponse } from './roles.protocol'
 
+@ApiTags('Roles')
 @Controller('roles')
 export class RolesController {
   constructor(
@@ -9,6 +11,10 @@ export class RolesController {
   ) {}
 
   @Post()
+  @ApiBody({ type: CreateRoleRequest })
+  @ApiOperation({ summary: 'Create a new role.' })
+  @ApiCreatedResponse({ type: CreateRoleResponse, description: 'The role has been successfully created.' })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   async create(
     @Body() request: CreateRoleRequest
   ): Promise<CreateRoleResponse> {
@@ -17,6 +23,9 @@ export class RolesController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get role information.' })
+  @ApiOkResponse({ type: GetRoleResponse })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   async findOne(
     @Param('id') id: string
   ): Promise<GetRoleResponse> {
@@ -24,22 +33,23 @@ export class RolesController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get roles list.' })
+  @ApiOkResponse({ type: GetRolesResponse })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   public async findAll() {
     return { data: await this.rolesService.findAll() }
   }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateRoleDto: UpdateRoleDto
-  // ) {
-  //   return this.rolesService.update(+id, updateRoleDto)
-  // }
-  //
-  // @Delete(':id')
-  // remove(
-  //   @Param('id') id: string
-  // ) {
-  //   return this.rolesService.remove(+id)
-  // }
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update role.' })
+  @ApiBody({ type: UpdateRoleRequest })
+  @ApiOkResponse({ type: UpdateRoleResponse })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  async update(
+    @Param('id') id: string,
+    @Body() request: UpdateRoleRequest
+  ): Promise<UpdateRoleResponse> {
+    await this.rolesService.update(id, request)
+    return new UpdateRoleResponse()
+  }
 }
