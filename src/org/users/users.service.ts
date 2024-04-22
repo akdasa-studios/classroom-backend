@@ -1,54 +1,33 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from './users.entity'
-import { DeepPartial, Repository } from 'typeorm'
+import { DeepPartial, In, Repository } from 'typeorm'
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
-  ) {}
+    @InjectRepository(User) private rolesRepository: Repository<User>,
+  ) { }
 
-  create(
-    fields: Partial<User>
-  ): User {
-    const user = new User()
-    user.name = fields.name
-    user.email = fields.email
-    user.roles = fields.roles
-    user.status = fields.status ?? 'invited'
-    user.title = fields.title
-    user.department = fields.department
-    return this.usersRepository.create(user)
+  async create(request: DeepPartial<User>): Promise<User> {
+    return await this.rolesRepository.save([request])[0]
   }
 
-  async save(
-    user: User
-  ) {
-    await this.usersRepository.save(user)
+  async findOne(id: string) {
+    return await this.rolesRepository.findOneBy({id})
   }
 
-  public async findAll(): Promise<User[]> {
-    return this.usersRepository.find()
+  async findAll() {
+    return await this.rolesRepository.find()
   }
 
-  findOne(userId: string) {
-    return this.usersRepository.findOneBy({id: userId})
+  async update(id: string, request: DeepPartial<User>) {
+    console.log(id, request)
+    return await this.rolesRepository.update(id, request)
   }
 
-
-  // async update(
-  //   userId: string,
-  //   fields: Partial<User>
-  // ) {
-  //   return this.usersRepository.(
-  //     { id: userId },
-  //     { ...fields }
-  //   )
-  // }
-
-  remove(userId: number) {
-    return `This action removes a #${userId} role`
+  async findMany(id: string[]) {
+    return await this.rolesRepository.find({ where: { id: In([...id || []]) } })
   }
 }
+

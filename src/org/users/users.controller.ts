@@ -1,101 +1,76 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { CreateUserResponse, GetUserResponse, GetUsersResponse, UpdateUserRequest, UpdateUserResponse } from 'submodules/protocol/lib/user'
-import { RolesService } from '../roles/roles.service'
-import { CreateUserRequest, InvalidResponse } from './users.dto'
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse } from '@nestjs/swagger'
 import { UsersService } from './users.service'
-
+import { CreateUserRequest, CreateUserResponse, GetUserResponse, GetUsersResponse, UpdateUserRequest, UpdateUserResponse } from './users.protocol'
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly rolesService: RolesService
-  ) { }
+    private readonly usersService: UsersService
+  ) {}
 
   @Post()
   @ApiBody({ type: CreateUserRequest })
-  @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
-  @ApiResponse({ status: 403, type: InvalidResponse, description: 'Forbidden.'})
-  @ApiResponse({ status: 409, type: InvalidResponse, description: 'A user with the same email already exists.'})
+  @ApiOperation({ summary: 'Create a new user.' })
+  @ApiCreatedResponse({ type: CreateUserResponse, description: 'The user has been successfully created.' })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   async create(
-    @Body() createUserRequest: CreateUserRequest
+    @Body() request: CreateUserRequest
   ): Promise<CreateUserResponse> {
     // TODO: fail if user with same email is already exist
     // TODO: fail if no roles provided
     // TODO: fail if invalid role id provided
     // TODO: fail if invalid email provided
     // TODO: ckeck users permission to create
-    const roles = await this.rolesService.findMany(createUserRequest.roles)
-    console.log(createUserRequest)
-
-
     this.usersService.create({
-      name: createUserRequest.name,
-      email: createUserRequest.email,
-      title: createUserRequest.title,
-      department: createUserRequest.department,
-      roles: roles,
+      ...request,
+      roles: request.roles.map(x => ({ id: x}))
     })
-    return { success: true }
-  }
-
-  @Get()
-  public async findAll(): Promise<GetUsersResponse> {
-    const users = await this.usersService.findAll()
-    return {
-      data: users.map(user => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        status: user.status,
-        title: user.title,
-        department: user.department,
-        roles: user.roles.map(x => x.id),
-      }))
-    }
+    return new CreateUserResponse()
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get user information.' })
+  @ApiOkResponse({ type: GetUserResponse })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   async findOne(
     @Param('id') id: string
   ): Promise<GetUserResponse> {
     const user = await this.usersService.findOne(id)
     return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      status: user.status,
-      title: user.title,
-      department: user.department,
-      roles: user.roles.map(x => x.id),
+      ...user,
+      roles: user.roles.map(x => x.id)
+    }
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get users list.' })
+  @ApiOkResponse({ type: GetUsersResponse })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  public async findAll() {
+    const users = await this.usersService.findAll() 
+    return { 
+      data: users.map(user => ({
+        ...user,
+        roles: user.roles.map(r => r.id)
+      }))
     }
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update user.' })
+  @ApiBody({ type: UpdateUserRequest })
+  @ApiOkResponse({ type: UpdateUserResponse })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   async update(
-    @Param('id') userId: string,
-    @Body() updateUserRequest: UpdateUserRequest
+    @Param('id') id: string,
+    @Body() request: UpdateUserRequest
   ): Promise<UpdateUserResponse> {
-    const user = await this.usersService.findOne(userId)
-    const roles = await this.rolesService.findMany(updateUserRequest.roles)
-
-    user.name = updateUserRequest.name ?? user.name
-    user.email = updateUserRequest.email ?? user.email
-    user.status = updateUserRequest.status ?? user.status
-    user.title = updateUserRequest.title ?? user.title
-    user.department = updateUserRequest.department ?? user.department
-    user.roles = roles ?? user.roles
-
-    await this.usersService.save(user)
-    return { success: true }
-  }
-
-  @Delete(':id')
-  remove(
-    @Param('id') id: string
-  ) {
-    return this.usersService.remove(+id)
+    this.usersService.update(id, {
+      ...request,
+      roles: request.roles ? request.roles.map(x => ({ id: x})) : undefined
+    })
+    return new UpdateUserResponse()
   }
 }

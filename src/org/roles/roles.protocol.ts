@@ -1,11 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator'
 import * as protocol from '@classroom/protocol/AccountsService'
 
 // -- Models ----------------------------------------------------------------
 
 export class Role implements protocol.Role {
   @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @IsUUID(4, { each:true })
   id: string
 
   @ApiProperty({ example: 'Teacher' })
