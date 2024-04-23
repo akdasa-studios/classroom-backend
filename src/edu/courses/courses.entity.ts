@@ -9,8 +9,12 @@ export class Course {
   public title: string
 
   @Column()
-  public summary: string
+  public subtitle: string
 
   @Column()
-  public coverUrl: string
+  public description: string
+
+  @Column()
+  public coverImageUrl: string
 }
+

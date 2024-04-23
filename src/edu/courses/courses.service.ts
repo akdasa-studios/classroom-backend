@@ -1,49 +1,31 @@
 import { Injectable } from '@nestjs/common'
-import { CreateCourseDto } from './dto/create-course.dto'
-import { UpdateCourseDto } from './dto/update-course.dto'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Course } from './entities/course.entity'
-import { Raw, Repository } from 'typeorm'
-import { PaginateQuery, Paginated, paginate } from 'nestjs-paginate'
-import { CoursePaginateConfig } from './course.paginate'
+import { Course } from './courses.entity'
+import { DeepPartial, In, Repository } from 'typeorm'
 
 @Injectable()
 export class CoursesService {
   constructor(
-    @InjectRepository(Course)
-    private coursesRepository: Repository<Course>,
-  ) {}
+    @InjectRepository(Course) private coursesRepository: Repository<Course>,
+  ) { }
 
-  create(createCourseDto: CreateCourseDto) {
-    return 'This action adds a new course'
+  async create(request: DeepPartial<Course>): Promise<Course> {
+    return await this.coursesRepository.save([request])[0]
   }
 
-  public async findAll(
-    query: PaginateQuery
-  ): Promise<Paginated<Course>> {
-    return await paginate(
-      query, this.coursesRepository, CoursePaginateConfig)
+  async findOne(id: string) {
+    return await this.coursesRepository.findOneBy({id})
   }
 
-  findOne(id: string) {
-    return this.coursesRepository.findOneBy({id})
+  async findAll() {
+    return await this.coursesRepository.find()
   }
 
-  async findByTitle(
-    title: string
-  ): Promise<Course[]> {
-    return await this.coursesRepository.find({
-      where: [
-        { title: Raw(alias => `LOWER(${alias}) ILIKE '%${title.toLowerCase()}%'`) }
-      ]
-    })
+  async update(id: string, request: DeepPartial<Course>) {
+    return await this.coursesRepository.update(id, request)
   }
 
-  update(id: number, updateCourseDto: UpdateCourseDto) {
-    return `This action updates a #${id} course`
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} course`
+  async findMany(id: string[]) {
+    return await this.coursesRepository.find({ where: { id: In([...id || []]) } })
   }
 }

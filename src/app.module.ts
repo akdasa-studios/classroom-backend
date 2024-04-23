@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
 import { OrganizationModule } from './org/organization.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Course } from './edu/courses/entities/course.entity'
 import { Role } from './org/roles/roles.entity'
 import { User } from './org/users/users.entity'
+import { EducationModule } from './edu/education.module'
+import { Course } from './edu/courses/courses.entity'
 
 
 @Module({
   imports: [
     OrganizationModule,
+    EducationModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -23,7 +23,6 @@ import { User } from './org/users/users.entity'
       synchronize: true,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule { }

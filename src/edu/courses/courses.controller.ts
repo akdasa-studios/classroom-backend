@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
-import { ApiOkPaginatedResponse, ApiPaginationQuery, Paginate, PaginateQuery, Paginated } from 'nestjs-paginate'
-import { CoursePaginateConfig } from './course.paginate'
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse } from '@nestjs/swagger'
 import { CoursesService } from './courses.service'
-import { CreateCourseDto, UpdateCourseDto } from './dto'
-import { Course } from './entities/course.entity'
+import { CreateCourseRequest, CreateCourseResponse, GetCourseResponse, GetCoursesResponse, UpdateCourseRequest, UpdateCourseResponse } from './courses.protocol'
 
+@ApiTags('Courses')
 @Controller('courses')
 export class CoursesController {
   constructor(
@@ -12,40 +11,45 @@ export class CoursesController {
   ) {}
 
   @Post()
-  create(
-    @Body() createCourseDto: CreateCourseDto
-  ) {
-    return this.coursesService.create(createCourseDto)
-  }
-
-  @Get()
-  @ApiOkPaginatedResponse(Course, CoursePaginateConfig)
-  @ApiPaginationQuery(CoursePaginateConfig)
-  public async findAll(
-    @Paginate() query: PaginateQuery
-  ): Promise<Paginated<Course>> {
-    return await this.coursesService.findAll(query)
+  @ApiBody({ type: CreateCourseRequest })
+  @ApiOperation({ summary: 'Create a new course.' })
+  @ApiCreatedResponse({ type: CreateCourseResponse, description: 'The course has been successfully created.' })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  async create(
+    @Body() request: CreateCourseRequest
+  ): Promise<CreateCourseResponse> {
+    this.coursesService.create(request)
+    return new CreateCourseResponse()
   }
 
   @Get(':id')
-  findOne(
+  @ApiOperation({ summary: 'Get course information.' })
+  @ApiOkResponse({ type: GetCourseResponse })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  async findOne(
     @Param('id') id: string
-  ) {
-    return this.coursesService.findOne(id)
+  ): Promise<GetCourseResponse> {
+    return await this.coursesService.findOne(id)
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get courses list.' })
+  @ApiOkResponse({ type: GetCoursesResponse })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  public async findAll() {
+    return { data: await this.coursesService.findAll() }
   }
 
   @Patch(':id')
-  update(
+  @ApiOperation({ summary: 'Update course.' })
+  @ApiBody({ type: UpdateCourseRequest })
+  @ApiOkResponse({ type: UpdateCourseResponse })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  async update(
     @Param('id') id: string,
-    @Body() updateCourseDto: UpdateCourseDto
-  ) {
-    return this.coursesService.update(+id, updateCourseDto)
-  }
-
-  @Delete(':id')
-  remove(
-    @Param('id') id: string
-  ) {
-    return this.coursesService.remove(+id)
+    @Body() request: UpdateCourseRequest
+  ): Promise<UpdateCourseResponse> {
+    await this.coursesService.update(id, request)
+    return new UpdateCourseResponse()
   }
 }
