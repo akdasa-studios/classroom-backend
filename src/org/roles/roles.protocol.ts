@@ -5,18 +5,23 @@ import * as protocol from '@classroom/protocol/AccountsService'
 // -- Models ----------------------------------------------------------------
 
 export class Role implements protocol.Role {
-  @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
-  @IsUUID(4, { each:true })
+  @ApiProperty({ example: '4a46f92e-c296-4409-b65f-d7b5d25347f1' })
+  @IsUUID(4)
   id: string
 
   @ApiProperty({ example: 'Teacher' })
+  @IsString()
+  @IsNotEmpty()
   name: string
 
   @ApiProperty({ example: 'Responsible for ...' })
+  @IsString()
+  @IsNotEmpty()
   description: string
 
   @ApiProperty({ example: '["org-roles"]', isArray: true })
   @IsString({ each: true })
+  @IsNotEmpty()
   permissions: string[]
 }
 
@@ -26,16 +31,14 @@ export class Role implements protocol.Role {
 export class CreateRoleRequest implements protocol.CreateRoleRequest {
   @ApiProperty({ example: 'Teacher', required: true })
   @IsNotEmpty()
-  public name: string
+  name: string
 
   @ApiProperty({ example: 'Responsible for ...', required: true })
   @IsNotEmpty()
   description: string
 
   @ApiProperty({ example: '["org-roles"]', required: true })
-  @IsNotEmpty()
-  @IsString({ each: true })
-  permissions: string[]
+  permissions?: string[]
 }
 
 export class CreateRoleResponse implements protocol.CreateRoleResponse {

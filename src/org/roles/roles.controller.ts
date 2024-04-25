@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post, UnprocessableEntityException } from '@nestjs/common'
 import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse } from '@nestjs/swagger'
 import { RolesService } from './roles.service'
 import { CreateRoleRequest, CreateRoleResponse, GetRoleResponse, GetRolesResponse, UpdateRoleRequest, UpdateRoleResponse } from './roles.protocol'
+import { ValidationError } from '@/utils/entities.service'
 
 @ApiTags('Roles')
 @Controller('roles')
@@ -18,8 +19,15 @@ export class RolesController {
   async create(
     @Body() request: CreateRoleRequest
   ): Promise<CreateRoleResponse> {
-    this.rolesService.create(request)
-    return new CreateRoleResponse()
+    try {
+      const role = await this.rolesService.create(request)
+      return { id: role.id }
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        throw new UnprocessableEntityException(err)
+      }
+      throw err
+    }
   }
 
   @Get(':id')

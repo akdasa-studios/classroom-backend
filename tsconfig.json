@@ -19,7 +19,9 @@
     "noFallthroughCasesInSwitch": false,
 
     "paths": {
-      "@classroom/protocol/*":    ["./submodules/protocol/lib/*"]
+      "@/*":                   ["./src/*"],
+      "@utils/*":              ["./src/utils/*"],
+      "@classroom/protocol/*": ["./submodules/protocol/lib/*"]
     }
   },
   "include": [

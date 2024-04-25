@@ -7,6 +7,7 @@ import { UsersController } from '../org/users/users.controller'
 import { UsersService } from '../org/users/users.service'
 import { RolesService } from '../org/roles/roles.service'
 import { DataSource } from 'typeorm'
+import { RolesController } from '@/org/roles/roles.controller'
 
 export const testingModule = async() => {
   const dataSource = await inMemoryDataSource()
@@ -18,7 +19,7 @@ export const testingModule = async() => {
         }),
         TypeOrmModule.forFeature([Role, User])
       ],
-      controllers: [UsersController],
+      controllers: [UsersController, RolesController],
       providers: [
         UsersService,
         RolesService

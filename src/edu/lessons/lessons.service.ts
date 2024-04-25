@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Course } from './courses.entity'
+import { Lesson } from './lessons.entity'
 import { Repository } from 'typeorm'
 import { EntitiesService } from 'src/utils/entities.service'
 
 @Injectable()
-export class CoursesService extends EntitiesService<Course> {
+export class LessonsService extends EntitiesService<Lesson> {
   constructor(
-    @InjectRepository(Course) repository: Repository<Course>,
+    @InjectRepository(Lesson) repository: Repository<Lesson>,
   ) {
     super(repository)
   }

@@ -9,6 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     errorHttpStatusCode: 422,
+    validateCustomDecorators: true,
   }))
   useContainer(app.select(AppModule), { fallbackOnErrors: true })
 
