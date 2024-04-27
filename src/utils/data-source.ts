@@ -1,8 +1,7 @@
 import { DataSource } from 'typeorm'
 import { newDb, DataType } from 'pg-mem'
 import { v4 } from 'uuid'
-import { User } from '../org/users/users.entity'
-import { Role } from '../org/roles/roles.entity'
+import { Course, Enrollment, Group, Lesson, Role, User } from '@classroom/admin/entities'
 
 
 export const inMemoryDataSource = async () => {
@@ -33,7 +32,7 @@ export const inMemoryDataSource = async () => {
 
   const ds: DataSource = await db.adapters.createTypeormDataSource({
     type: 'postgres',
-    entities: [User, Role],
+    entities: [Course, Enrollment, Group, Lesson, Role, User],
   })
 
   await ds.initialize()

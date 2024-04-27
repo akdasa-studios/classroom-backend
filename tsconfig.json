@@ -19,8 +19,7 @@
     "noFallthroughCasesInSwitch": false,
 
     "paths": {
-      "@/*":                   ["./src/*"],
-      "@utils/*":              ["./src/utils/*"],
+      "@classroom/admin/*":    ["./src/*"],
       "@classroom/protocol/*": ["./submodules/protocol/lib/*"]
     }
   },

@@ -10,9 +10,7 @@ export class ValidationError extends Error {
   }
 }
 
-@Entity()
 export abstract class BaseModel {
-  @PrimaryGeneratedColumn()
   public readonly id: string
 }
 
@@ -20,7 +18,7 @@ export class EntitiesService<
   TEntity extends ObjectLiteral & BaseModel
 > {
   constructor(
-    private readonly repository: Repository<TEntity>
+    protected readonly repository: Repository<TEntity>
   ) { }
 
   /**

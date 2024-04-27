@@ -1,19 +1,14 @@
-import { Module } from '@nestjs/common'
-import { OrganizationModule } from './org/organization.module'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { Role } from './org/roles/roles.entity'
-import { User } from './org/users/users.entity'
-import { EducationModule } from './edu/education.module'
-import { Course } from './edu/courses/courses.entity'
-import { Enrollment } from './edu/enrollments/enrollments.entity'
-import { Lesson } from './edu/lessons/lessons.entity'
-import { Group } from './edu/groups/groups.entity'
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Course, Enrollment, Group, Lesson, Role, User } from '@classroom/admin/entities'
+import { CoursesService, EnrollmentsService, GroupsService, LessonsService, RolesService, UsersService } from '@classroom/admin/services'
+import { CoursesController, EnrollmentsController, GroupsController, LessonsController, RolesController, UsersController } from "@classroom/admin/controllers/v1"
+
+const ENTITIES = [Course, Role, User, Group, Enrollment, Lesson]
 
 
 @Module({
   imports: [
-    OrganizationModule,
-    EducationModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -21,11 +16,28 @@ import { Group } from './edu/groups/groups.entity'
       username: 'classroom',
       password: 'classroom',
       database: 'classroom',
-      entities: [Course, Role, User, Group, Enrollment, Lesson],
-      // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
-      synchronize: true,
+      entities: ENTITIES,
+      synchronize: true, // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
     }),
+    TypeOrmModule.forFeature(ENTITIES)
   ],
-  providers: [],
+  controllers: [
+    RolesController,
+    UsersController,
+    CoursesController,
+    EnrollmentsController,
+    GroupsController,
+    LessonsController
+  ],
+  providers: [
+    RolesService,
+    UsersService,
+    CoursesService,
+    EnrollmentsService,
+    GroupsService,
+    LessonsService,
+    // IsRolesExist,
+    //, IsUserExistConstraint
+  ],
 })
 export class AppModule { }
