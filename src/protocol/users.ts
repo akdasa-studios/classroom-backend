@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsUUID, IsOptional } from 'class-validator'
-import * as protocol from '@classroom/protocol/AccountsService'
+import * as protocol from '@classroom/protocol/UsersService'
 
 // -- Models ----------------------------------------------------------------
 
