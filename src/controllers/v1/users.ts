@@ -23,9 +23,9 @@ export class UsersController {
     // TODO: fail if invalid role id provided
     // TODO: fail if invalid email provided
     // TODO: ckeck users permission to create
-    this.usersService.create({
+    await this.usersService.create({
       ...request,
-      roles: request.roles.map(x => ({ id: x}))
+      status: 'invited' 
     })
     return new CreateUserResponse()
   }
@@ -38,24 +38,16 @@ export class UsersController {
     @Param('id') id: string
   ): Promise<GetUserResponse> {
     const user = await this.usersService.findOne(id)
-    return {
-      ...user,
-      roles: user.roles.map(x => x.id)
-    }
+    return { ...user }
   }
 
   @Get()
   @ApiOperation({ summary: 'Get users list.' })
   @ApiOkResponse({ type: GetUsersResponse })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  public async findAll() {
+  public async findAll(): Promise<GetUsersResponse> {
     const users = await this.usersService.findAll() 
-    return { 
-      data: users.map(user => ({
-        ...user,
-        roles: user.roles.map(r => r.id)
-      }))
-    }
+    return { items: users }
   }
 
   @Patch(':id')
@@ -67,9 +59,10 @@ export class UsersController {
     @Param('id') id: string,
     @Body() request: UpdateUserRequest
   ): Promise<UpdateUserResponse> {
-    this.usersService.update(id, {
+    await this.usersService.update({
       ...request,
-      roles: request.roles ? request.roles.map(x => ({ id: x})) : undefined
+      id: id,
+      roles: request.roleIds.map(x => ({ id: x })),
     })
     return new UpdateUserResponse()
   }

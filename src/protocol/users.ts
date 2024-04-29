@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsUUID, IsOptional } from 'class-validator'
+import { IsEmail, IsUUID, IsOptional, IsString, IsNotEmpty } from 'class-validator'
 import * as protocol from '@classroom/protocol/UsersService'
 
 // -- Models ----------------------------------------------------------------
@@ -28,7 +28,7 @@ export class User implements protocol.User {
     ],
   })
   @IsUUID('4', { each: true })
-  roles: string[]
+  roleIds: string[]
   
   @ApiProperty({ example: 'Head of department', required: false })
   @IsOptional()
@@ -48,6 +48,8 @@ export class User implements protocol.User {
 
 export class CreateUserRequest implements protocol.CreateUserRequest {
   @ApiProperty({ example: 'Krishna das' })
+  @IsString()
+  @IsNotEmpty()
   name: string
 
   @ApiProperty({ example: 'example@example.com' })
@@ -66,7 +68,7 @@ export class CreateUserRequest implements protocol.CreateUserRequest {
     ],
   })
   @IsUUID('4', { each: true })
-  roles: string[]
+  roleIds: string[]
   
   @ApiProperty({ example: 'Head of department', required: false })
   @IsOptional()
@@ -111,7 +113,7 @@ export class GetUserResponse implements protocol.GetUserResponse {
     ],
   })
   @IsUUID('4', { each: true })
-  roles: string[]
+  roleIds: string[]
   
   @ApiProperty({ example: 'Head of department', required: false })
   @IsOptional()
@@ -159,7 +161,7 @@ export class UpdateUserRequest implements protocol.UpdateUserRequest {
   })
   @IsUUID('4', { each: true })
   @IsOptional()
-  roles?: string[]
+  roleIds?: string[]
   
   @ApiProperty({ example: 'Head of department', required: false })
   @IsOptional()

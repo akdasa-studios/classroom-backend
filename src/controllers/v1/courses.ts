@@ -36,8 +36,8 @@ export class CoursesController {
   @ApiOperation({ summary: 'Get courses list.' })
   @ApiOkResponse({ type: GetCoursesResponse })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  public async findAll() {
-    return { data: await this.coursesService.findAll() }
+  public async findAll(): Promise<GetCoursesResponse> {
+    return { items: await this.coursesService.findAll() }
   }
 
   @Patch(':id')
@@ -49,7 +49,7 @@ export class CoursesController {
     @Param('id') id: string,
     @Body() request: UpdateCourseRequest
   ): Promise<UpdateCourseResponse> {
-    await this.coursesService.update(id, request)
+    await this.coursesService.update({ id: id, ...request })
     return new UpdateCourseResponse()
   }
 }

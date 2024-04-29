@@ -65,7 +65,7 @@ export class GroupsController {
     @Param('id') id: string,
     @Body() request: UpdateGroupRequest
   ): Promise<UpdateGroupResponse> {
-    await this.groupsService.update(id, request)
+    await this.groupsService.update({ id, ...request })
     return new UpdateGroupResponse()
   }
 }

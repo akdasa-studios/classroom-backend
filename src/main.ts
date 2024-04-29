@@ -10,6 +10,7 @@ async function bootstrap() {
     transform: true,
     errorHttpStatusCode: 422,
     validateCustomDecorators: true,
+    whitelist: true,
   }))
   useContainer(app.select(AppModule), { fallbackOnErrors: true })
 

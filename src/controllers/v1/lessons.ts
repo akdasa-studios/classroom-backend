@@ -54,7 +54,7 @@ export class LessonsController {
     @Param('id') id: string,
     @Body() request: UpdateLessonRequest
   ): Promise<UpdateLessonResponse> {
-    await this.lessonsService.update(id, request)
+    await this.lessonsService.update({ id, ...request })
     return new UpdateLessonResponse()
   }
 }

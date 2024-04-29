@@ -44,8 +44,8 @@ export class RolesController {
   @ApiOperation({ summary: 'Get roles list.' })
   @ApiOkResponse({ type: GetRolesResponse })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  public async findAll() {
-    return { data: await this.rolesService.findAll() }
+  public async findAll(): Promise<GetRolesResponse> {
+    return { items: await this.rolesService.findAll() }
   }
 
   @Patch(':id')
@@ -57,7 +57,8 @@ export class RolesController {
     @Param('id') id: string,
     @Body() request: UpdateRoleRequest
   ): Promise<UpdateRoleResponse> {
-    await this.rolesService.update(id, request)
+    console.log(request)
+    await this.rolesService.update({ id, ...request })
     return new UpdateRoleResponse()
   }
 }

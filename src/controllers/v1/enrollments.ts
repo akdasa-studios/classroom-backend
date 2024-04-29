@@ -62,7 +62,8 @@ export class EnrollmentsController {
     @Param('id') id: string,
     @Body() request: UpdateEnrollmentRequest
   ): Promise<UpdateEnrollmentResponse> {
-    await this.enrollmentsService.update(id, {
+    await this.enrollmentsService.update({
+      id:     id,
       course: { id: request.courseId },
       group:  { id: request.groupId }
     })

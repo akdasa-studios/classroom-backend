@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, RelationId, BaseEntity } from 'typeorm'
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 import { Role } from '@classroom/admin/entities'
 
@@ -27,9 +27,12 @@ export class User {
   })
   public status: UserStatus
 
-  @ManyToMany(() => Role, { eager: true })
+  @ManyToMany(() => Role)
   @JoinTable({ name: 'user_roles'})
   roles: Role[]
+
+  @RelationId((user: User) => user.roles)
+  roleIds: string[]
 
   @Column({ nullable: true })
 	title?: string

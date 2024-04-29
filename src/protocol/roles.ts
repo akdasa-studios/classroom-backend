@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator'
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator'
 import * as protocol from '@classroom/protocol/RolesService'
 
 // -- Models ----------------------------------------------------------------
@@ -73,12 +73,18 @@ export class GetRolesResponse implements protocol.GetRolesResponse {
 
 export class UpdateRoleRequest implements protocol.UpdateRoleRequest {
   @ApiProperty({ example: 'Teacher', required: false })
+  @IsString()
+  @IsOptional()
   name?: string
 
   @ApiProperty({ example: 'Responsible for ...', required: false })
+  @IsString()
+  @IsOptional()
   description?: string
 
   @ApiProperty({ example: '["org-roles"]', isArray: true, required: false })
+  @IsString({ each: true })
+  @IsOptional()
   permissions?: string[]
 }
 

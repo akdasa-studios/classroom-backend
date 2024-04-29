@@ -32,6 +32,7 @@ export class EntitiesService<
     if (errors.length == 0) {
       return await this.repository.save(entity)
     } else {
+      // TODO: Catch error correctrly. Endpoint returns 500
       throw new ValidationError("Error", errors)
     }
   }
@@ -45,8 +46,8 @@ export class EntitiesService<
     return await this.repository.find()
   }
 
-  async update(id: string, request: QueryDeepPartialEntity<TEntity>) {
-    return await this.repository.update(id, request)
+  async update(request: DeepPartial<TEntity>) {
+    return await this.repository.save(request)
   }
 
   async findMany(id: string[]) {
