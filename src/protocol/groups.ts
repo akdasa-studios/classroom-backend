@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator'
+import { IsNotEmpty, IsString, IsUUID, IsISO8601 } from 'class-validator'
 import * as protocol from '@classroom/protocol/GroupsService'
 
 // -- Models ----------------------------------------------------------------
@@ -10,16 +10,25 @@ export class Group implements protocol.Group {
   id: string
 
   @ApiProperty({ example: 'Bhakti-shastri' })
+  @IsNotEmpty()
+  @IsString()
   name: string
 
   @ApiPropertyOptional({ example: 'One year couse ...' })
-  description?: string
+  @IsString()
+  description: string
 
   @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @IsUUID(4)
   leaderId: string
 
-  @ApiProperty({ example: 123456789 })
-  startsAt: number
+  @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @IsUUID(4)
+  courseId: string
+
+  @ApiProperty({ example: "2024-05-05T07:32:10.490Z" })
+  @IsISO8601({ strict: true })
+  startsAt: string
 }
 
 
@@ -27,26 +36,33 @@ export class Group implements protocol.Group {
 
 export class CreateGroupRequest implements protocol.CreateGroupRequest {
   @ApiProperty({ example: 'Bhakti-shastri' })
+  @IsString()
   @IsNotEmpty()
   name: string
 
   @ApiPropertyOptional({ example: 'One year couse ...' })
+  @IsString()
   @IsNotEmpty()
-  description?: string
+  description: string
 
   @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
-  @IsNotEmpty()
+  @IsUUID(4)
   leaderId: string
 
-  @ApiProperty({ example: 123456789 })
+  @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @IsUUID(4)
+  courseId: string
+
+  @ApiProperty({ example: "2024-05-05T07:32:10.490Z" })
   @IsNotEmpty()
-  @IsNumber()
-  startsAt: number
+  @IsISO8601({ strict: true })
+  startsAt: string
 }
 
 export class CreateGroupResponse implements protocol.CreateGroupResponse {
   @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
   @IsNotEmpty()
+  @IsString()
   id: string
 }
 
@@ -59,16 +75,26 @@ export class GetGroupResponse implements protocol.GetGroupResponse {
   id: string
 
   @ApiProperty({ example: 'Bhakti-shastri' })
+  @IsString()
+  @IsNotEmpty()
   name: string
 
   @ApiPropertyOptional({ example: 'One year couse ...' })
-  description?: string
+  @IsString()
+  @IsNotEmpty()
+  description: string
 
   @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @IsUUID(4)
   leaderId: string
 
-  @ApiProperty({ example: 123456789 })
-  startsAt: number
+  @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @IsUUID(4)
+  courseId: string
+
+  @ApiProperty({ example: "2024-05-05T07:32:10.490Z" })
+  @IsISO8601({ strict: true })
+  startsAt: string
 }
 
 
@@ -82,21 +108,20 @@ export class GetGroupsResponse implements protocol.GetGroupsResponse {
 
 export class UpdateGroupRequest implements protocol.UpdateGroupRequest {
   @ApiPropertyOptional({ example: 'Bhakti-shastri' })
-  @IsNotEmpty()
+  @IsString()
   name?: string
 
   @ApiPropertyOptional({ example: 'One year couse ...' })
-  @IsNotEmpty()
+  @IsString()
   description?: string
 
   @ApiPropertyOptional({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
-  @IsNotEmpty()
+  @IsUUID(4)
   leaderId?: string
 
   @ApiPropertyOptional({ example: 123456789 })
-  @IsNotEmpty()
-  @IsNumber()
-  startsAt?: number
+  @IsISO8601({ strict: true })
+  startsAt?: string
 }
 
 export class UpdateGroupResponse implements protocol.UpdateGroupResponse {

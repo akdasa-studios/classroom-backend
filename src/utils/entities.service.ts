@@ -1,6 +1,5 @@
-import { DeepPartial, Entity, In, ObjectLiteral, PrimaryGeneratedColumn, Repository } from 'typeorm'
+import { DeepPartial, In, ObjectLiteral, Repository, Raw } from 'typeorm'
 import { validate } from 'class-validator'
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 
 export class ValidationError extends Error {
   public errors: any
@@ -30,7 +29,8 @@ export class EntitiesService<
     const entity = this.repository.create(request)
     const errors = await validate(entity)
     if (errors.length == 0) {
-      return await this.repository.save(entity)
+      // console.log(">>>>", request)
+      return await this.repository.save(request)
     } else {
       // TODO: Catch error correctrly. Endpoint returns 500
       throw new ValidationError("Error", errors)
@@ -57,3 +57,4 @@ export class EntitiesService<
     })
   }
 }
+

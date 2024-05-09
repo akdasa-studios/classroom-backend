@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, RelationId } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, RelationId, ManyToOne } from 'typeorm'
 import { Course } from '@classroom/admin/entities'
 
 @Entity('lessons')
@@ -6,7 +6,7 @@ export class Lesson {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @OneToOne(() => Course)
+  @ManyToOne(() => Course)
   @JoinColumn()
   course: Course
 

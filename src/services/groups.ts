@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { Repository, Raw } from 'typeorm'
 import { Group } from '@classroom/admin/entities'
 import { EntitiesService } from '@classroom/admin/utils/entities.service'
 
@@ -10,5 +10,19 @@ export class GroupsService extends EntitiesService<Group> {
     @InjectRepository(Group) repository: Repository<Group>,
   ) {
     super(repository)
+  }
+
+  async findByNameAndCourse(
+    name: string, courseId: string
+  ) {
+    return await this.repository.find({
+      relations: { 
+        course: true,
+      },
+      where: { 
+        name: name ? Raw((alias) => `LOWER(${alias}) Like LOWER(:value)`, { value: `%${name}%`, }) : undefined,
+        course: { id: courseId }
+      }
+    })
   }
 }

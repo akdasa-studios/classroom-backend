@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, RelationId } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, RelationId, ManyToOne } from 'typeorm'
 import { User, Group, Course } from '@classroom/admin/entities'
 import { IsUserExist } from '@classroom/admin/validation'
 
@@ -10,20 +10,20 @@ export class Enrollment {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn()
   applicant: User
 
   @RelationId((e: Enrollment) => e.applicant)
   applicantId: string
 
-  @OneToOne(() => Group, { nullable: true })
+  @ManyToOne(() => Group, { nullable: true })
   group?: Group
 
   @RelationId((e: Enrollment) => e.group)
   groupId: string | null
 
-  @OneToOne(() => Course)
+  @ManyToOne(() => Course)
   course: Course
 
   @RelationId((e: Enrollment) => e.course)

@@ -11,5 +11,26 @@ export class EnrollmentsService extends EntitiesService<Enrollment> {
   ) {
     super(repository)
   }
+
+  async findAll() {
+    return await this.repository.find({
+      relations: { 
+        applicant: true,
+        course: true,
+        group: true,
+      },
+    })
+  }
+
+  async findOne(id: string) {
+    return await this.repository.findOne({ 
+      where: { id: id },
+      relations: {
+        applicant: true,
+        course: true,
+        group: true,
+      }
+    })
+  }
 }
 

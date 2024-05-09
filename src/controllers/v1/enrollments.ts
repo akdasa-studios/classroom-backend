@@ -18,6 +18,7 @@ export class EnrollmentsController {
   async create(
     @Body() request: CreateEnrollmentRequest
   ): Promise<CreateEnrollmentResponse> {
+    // TODO: check if group belongs to the course
     const userId = '';
     this.enrollmentsService.create({ 
       applicant:   { id: userId },
@@ -38,9 +39,9 @@ export class EnrollmentsController {
     const enrollment = await this.enrollmentsService.findOne(id)
     return {
       id:          enrollment.id,
-      applicantId: enrollment.applicant.id,
-      courseId:    enrollment.course.id,
-      groupId:     enrollment.group.id,
+      applicant:   { id: enrollment.applicant.id, name: enrollment.applicant.name, avatarUrl: enrollment.applicant.avatarUrl },
+      course:      { id: enrollment.course.id,    title: enrollment.course.title },
+      group:       enrollment.group ? { id: enrollment.group.id, name: enrollment.group.name } : undefined,
       status:      enrollment.status
     }
   }
@@ -49,8 +50,14 @@ export class EnrollmentsController {
   @ApiOperation({ summary: 'Get enrollments list.' })
   @ApiOkResponse({ type: GetEnrollmentsResponse })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  public async findAll() {
-    return { data: await this.enrollmentsService.findAll() }
+  public async findAll(): Promise<GetEnrollmentsResponse> {
+    return { items: (await this.enrollmentsService.findAll()).map(x => ({
+      id: x.id,
+      status: x.status,
+      applicant: { id: x.applicant.id, name:  x.applicant.name, avatarUrl: x.applicant.avatarUrl },
+      course:    { id: x.course.id,    title: x.course.title },
+      group:     x.group ? { id: x.group.id, name: x.group.name } : undefined,
+    })) }
   }
 
   @Patch(':id')
@@ -62,10 +69,13 @@ export class EnrollmentsController {
     @Param('id') id: string,
     @Body() request: UpdateEnrollmentRequest
   ): Promise<UpdateEnrollmentResponse> {
+    // TODO: check ir group belongs ti the course
+    console.log(request)
     await this.enrollmentsService.update({
       id:     id,
       course: { id: request.courseId },
-      group:  { id: request.groupId }
+      group:  { id: request.groupId },
+      status: request.status
     })
     return new UpdateEnrollmentResponse()
   }

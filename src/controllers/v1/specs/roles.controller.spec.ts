@@ -1,7 +1,9 @@
-import { UnprocessableEntityException } from '@nestjs/common'
+import { NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 import { RolesController } from '@classroom/admin/controllers/v1'
 import { RolesService } from '@classroom/admin/services'
 import { testingModule } from '@classroom/admin/utils'
+import { CreateRoleRequest, UpdateRoleRequest } from '@classroom/admin/protocol'
+import { Role } from '@classroom/admin/entities'
 
 
 describe('RolesController', () => {
@@ -18,51 +20,97 @@ describe('RolesController', () => {
     expect(rolesController).toBeDefined()
   })
 
-  it('create role', async () => {
-    const response = await rolesController.create({
-      name: 'New role',
-      description: 'Description',
-      permissions: []
+
+  // --- create() -------------------------------------------------------------
+
+  describe('create()', () => {
+    it.each([
+      { name: 'New role', description: 'Description', permissions: [] },
+    ])('should create role', async (request: CreateRoleRequest) => {
+      const response = await rolesController.create(request)
+      expect(response.id).toBeDefined()
     })
 
-    //@ts-ignore
-    expect(response.id).toBeDefined()
+    it.each([
+      ["name is missing",        { description: 'desc' }],
+      ["name is empty",          { name: '', description: 'desc' }],
+      ["description is missing", { name:        'role' }],
+      ["description is empty",   { name: 'role', description: '' }],
+    ])('should not create role if %s', async (_: string, role: CreateRoleRequest) => {
+      const request = async () => await rolesController.create(role)
+      expect(request).rejects.toThrow(UnprocessableEntityException)
+    })
   })
 
-  it.each<string>([
-    'name', 'description'
-  ])('%s is required', async (field) => {
-    const data = {
-      name: 'name',
-      description: 'description',
-    }
-    const dataWithExcludedKey = {
-      ...data, 
-      [field]: undefined
-    }
+  // --- findOne() ------------------------------------------------------------
 
-    const request = async () => await rolesController.create(dataWithExcludedKey)
-    expect(request).rejects.toThrow(UnprocessableEntityException)
+  describe('findOne()', () => {
+    let role: Role
+
+    beforeEach(async () => {
+      role = await rolesService.create({
+        name: 'role',
+        description: 'desc',
+        permissions: []
+      })
+    })
+
+    it('should return role if found', async () => {
+      const response = await rolesController.findOne(role.id)
+      expect(response.id).toEqual(role.id)
+    })
+
+    it('should throw exception if nothing found', async () => {
+      const request = async () => await rolesController.findOne('1b5fb2a6-d113-47c6-b5c0-abd920eacf8c')
+      expect(request).rejects.toThrow(NotFoundException)
+    })
   })
 
-  // describe('findAll()', () => {
-  //   it('should return an empty array if no roles found', async () => {
-  //     const response = await rolesController.findAll()
-  //     expect(response).toEqual({ data: [] })
-  //   })
-  //
-  //   it('should return roles if found', async () => {
-  //     const role = new Role()
-  //     role.name = 'test'
-  //     role.email = 'a@b.com'
-  //     role.status = 'invited'
-  //     role.roles = []
-  //     await rolesService.save(role)
-  //
-  //     const response = await rolesController.findAll()
-  //     expect(response.data).not.toEqual([])
-  //     expect(response.data).toHaveLength(1)
-  //   })
-  // })
+  // --- findAll() ------------------------------------------------------------
 
+  describe('findAll()', () => {
+    it('should return an empty array if no roles found', async () => {
+      const response = await rolesController.findAll()
+      expect(response).toEqual({ items: [] })
+    })
+  })
+
+  describe('findAll()', () => {
+    beforeEach(async () => {
+      await rolesService.create({ name: 'role 1', description: 'desc', permissions: [] })
+      await rolesService.create({ name: 'role 2', description: 'desc', permissions: [] })
+    })
+
+    it('should return roles if found', async () => {
+      const response = await rolesController.findAll()
+      expect(response.items).not.toEqual([])
+      expect(response.items).toHaveLength(2)
+    })
+  })
+
+  // --- update() -------------------------------------------------------------
+
+  describe('update()', () => {
+    let role1: Role
+    let role2: Role
+
+    beforeEach(async () => {
+      role1 = await rolesService.create({ name: 'role 1', description: 'desc', permissions: [] })
+      role2 = await rolesService.create({ name: 'role 2', description: 'desc', permissions: [] })
+    })
+
+    it.each([
+      ['name',                  { name: 'role 1 updated' }],
+      ['description',           { description: 'description updated' }],
+      ['name and description',  { name: 'role 1 updated', description: 'description updated' }],
+      ['permissions',           { permissions: ['new'] }],
+    ])('should update role with %s', async (field, request: UpdateRoleRequest) => {
+      await rolesController.update(role1.id, request)
+      const updatedEntity = await rolesService.findOne(role1.id)
+
+      expect(updatedEntity.name).toEqual(request.name || role1.name)
+      expect(updatedEntity.description).toEqual(request.description || role1.description)
+      expect(updatedEntity.permissions).toEqual(request.permissions || role1.permissions)
+    })
+  })
 })

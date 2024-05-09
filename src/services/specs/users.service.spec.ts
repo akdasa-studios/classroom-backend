@@ -34,11 +34,13 @@ describe('UsersService', () => {
       roles: [roleAdmin, roleStudent]
     })
 
-    expect(user.id).toBeDefined()
-    expect(user.email).toEqual("test@example.com")
-    expect(user.status).toEqual('active')
-    expect(user.roles).toEqual([roleAdmin, roleStudent])
-    expect(user.permissions).toEqual(["admin", "homework:view", "homework:create"])
+    const t = await usersService.findOne(user.id)
+
+    expect(t.id).toBeDefined()
+    expect(t.email).toEqual("test@example.com")
+    expect(t.status).toEqual('active')
+    expect(t.roles).toEqual([roleAdmin, roleStudent])
+    expect(t.permissions).toEqual(["admin", "homework:view", "homework:create"])
   })
 
   // it.each<string>([
@@ -50,7 +52,7 @@ describe('UsersService', () => {
   //     permissions: [],
   //   }
   //   const dataWithExcludedKey = {
-  //     ...data, 
+  //     ...data,
   //     [field]: undefined
   //   }
   //

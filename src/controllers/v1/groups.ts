@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Param, Patch, Post, UnprocessableEntityException } from '@nestjs/common'
+import { Body, Controller, Get, NotFoundException, Param, Patch, Post, Query, UnprocessableEntityException } from '@nestjs/common'
 import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse, ApiUnprocessableEntityResponse } from '@nestjs/swagger'
 import { GroupsService } from '@classroom/admin/services'
 import { CreateGroupRequest, CreateGroupResponse, GetGroupResponse, GetGroupsResponse, UpdateGroupRequest, UpdateGroupResponse } from '@classroom/admin/protocol'
@@ -25,7 +25,8 @@ export class GroupsController {
         name:        request.name,
         description: request.description,
         startsAt:    request.startsAt,
-        leaderId:    request.leaderId,
+        leader:      { id: request.leaderId },
+        course:      { id: request.courseId },
       })
       return new CreateGroupResponse()
     } catch (err) {
@@ -44,7 +45,12 @@ export class GroupsController {
     @Param('id') id: string
   ): Promise<GetGroupResponse> {
     const group = await this.groupsService.findOne(id)
-    if (group) { return group }
+    if (group) { 
+      return { 
+        ...group,
+        startsAt: group.startsAt.toISOString()
+      }
+    }
     throw new NotFoundException()
   }
 
@@ -52,8 +58,20 @@ export class GroupsController {
   @ApiOperation({ summary: 'Get groups list.' })
   @ApiOkResponse({ type: GetGroupsResponse })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  public async findAll() {
-    return { data: await this.groupsService.findAll() }
+  public async findAll(
+    @Query('query') query?: string,
+    @Query('courseId') courseId?: string,
+  ): Promise<GetGroupsResponse> {
+    const result = (query || courseId)
+      ? this.groupsService.findByNameAndCourse(query, courseId)
+      : this.groupsService.findAll()
+
+    return { 
+      items: (await result).map(group => ({
+        ...group,
+        startsAt: group.startsAt.toISOString()
+      }))
+    }
   }
 
   @Patch(':id')
@@ -65,7 +83,11 @@ export class GroupsController {
     @Param('id') id: string,
     @Body() request: UpdateGroupRequest
   ): Promise<UpdateGroupResponse> {
-    await this.groupsService.update({ id, ...request })
+    await this.groupsService.update({ 
+      id, ...request, 
+      leader:   { id: request.leaderId }, 
+      startsAt: request.startsAt ? new Date(request.startsAt) : undefined
+    })
     return new UpdateGroupResponse()
   }
 }

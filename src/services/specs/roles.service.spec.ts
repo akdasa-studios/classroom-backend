@@ -32,7 +32,7 @@ describe('RolesService', () => {
       permissions: [],
     }
     const dataWithExcludedKey = {
-      ...data, 
+      ...data,
       [field]: undefined
     }
 
@@ -55,7 +55,7 @@ describe('RolesService', () => {
     })
 
     // act
-    await rolesService.update(role.id, updateData)
+    await rolesService.update({ id: role.id, ...updateData })
 
     // assert
     const updated = await rolesService.findOne(role.id)

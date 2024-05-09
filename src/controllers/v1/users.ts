@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Get, NotFoundException, Param, Patch, Post, Query, UnprocessableEntityException } from '@nestjs/common'
 import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse } from '@nestjs/swagger'
 import { UsersService } from '@classroom/admin/services'
 import { CreateUserRequest, CreateUserResponse, GetUserResponse, GetUsersResponse, UpdateUserRequest, UpdateUserResponse } from '@classroom/admin/protocol'
+import { ValidationError } from '@classroom/admin/utils/entities.service'
 
 @ApiTags('Users')
 @Controller('users')
@@ -23,11 +24,17 @@ export class UsersController {
     // TODO: fail if invalid role id provided
     // TODO: fail if invalid email provided
     // TODO: ckeck users permission to create
-    await this.usersService.create({
-      ...request,
-      status: 'invited' 
-    })
-    return new CreateUserResponse()
+    try {
+      const entity = await this.usersService.create({
+        ...request,
+        status: 'invited'
+      })
+      return { id: entity.id }
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        throw new UnprocessableEntityException(err)
+      }
+    }
   }
 
   @Get(':id')
@@ -37,16 +44,22 @@ export class UsersController {
   async findOne(
     @Param('id') id: string
   ): Promise<GetUserResponse> {
-    const user = await this.usersService.findOne(id)
-    return { ...user }
+    const entity = await this.usersService.findOne(id)
+    if (!entity) {
+      throw new NotFoundException()
+    } else {
+      return entity
+    }
   }
 
   @Get()
   @ApiOperation({ summary: 'Get users list.' })
   @ApiOkResponse({ type: GetUsersResponse })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  public async findAll(): Promise<GetUsersResponse> {
-    const users = await this.usersService.findAll() 
+  public async findAll(
+    @Query('query') query?: string
+  ): Promise<GetUsersResponse> {
+    const users = await this.usersService.findAllManagers(query)
     return { items: users }
   }
 
@@ -62,7 +75,7 @@ export class UsersController {
     await this.usersService.update({
       ...request,
       id: id,
-      roles: request.roleIds.map(x => ({ id: x })),
+      roles: request.roleIds ? request.roleIds.map(x => ({ id: x })) : undefined,
     })
     return new UpdateUserResponse()
   }

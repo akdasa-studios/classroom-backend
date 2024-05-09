@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, BaseEntity, JoinColumn, RelationId } from 'typeorm'
-import { User } from '@classroom/admin/entities'
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, JoinColumn, RelationId, ManyToOne } from 'typeorm'
+import { User, Course } from '@classroom/admin/entities'
 
 @Entity('groups')
 export class Group extends BaseEntity {
@@ -10,16 +10,23 @@ export class Group extends BaseEntity {
   name: string
 
   @Column()
-  description?: string
+  description: string
 
-  @OneToOne(() => User, { nullable: false })
+  @ManyToOne(() => User, { nullable: false })
   @JoinColumn()
   leader: User 
 
   @RelationId((e: Group) => e.leader)
   leaderId: string
 
-  @Column()
-  startsAt: number
+  @ManyToOne(() => Course, { nullable: false, })
+  @JoinColumn()
+  course: Course
+
+  @RelationId((e: Group) => e.course)
+  courseId: string
+
+  @Column({ type: 'timestamp', nullable: true })
+  startsAt: Date
 }
 

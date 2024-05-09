@@ -42,6 +42,7 @@ export class CreateRoleRequest implements protocol.CreateRoleRequest {
 }
 
 export class CreateRoleResponse implements protocol.CreateRoleResponse {
+  id: string
 }
 
 

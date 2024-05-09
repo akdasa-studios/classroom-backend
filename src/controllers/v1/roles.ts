@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, UnprocessableEntityException } from '@nestjs/common'
+import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Post, UnprocessableEntityException } from '@nestjs/common'
 import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse } from '@nestjs/swagger'
 import { RolesService } from '@classroom/admin/services'
 import { CreateRoleRequest, CreateRoleResponse, GetRoleResponse, GetRolesResponse, UpdateRoleRequest, UpdateRoleResponse } from '@classroom/admin/protocol'
@@ -35,9 +35,14 @@ export class RolesController {
   @ApiOkResponse({ type: GetRoleResponse })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   async findOne(
-    @Param('id') id: string
+    @Param('id', new ParseUUIDPipe({version: '4'})) id: string
   ): Promise<GetRoleResponse> {
-    return await this.rolesService.findOne(id)
+    const entity = await this.rolesService.findOne(id)
+    if (!entity) {
+      throw new NotFoundException()
+    } else {
+      return entity
+    }
   }
 
   @Get()
@@ -57,7 +62,6 @@ export class RolesController {
     @Param('id') id: string,
     @Body() request: UpdateRoleRequest
   ): Promise<UpdateRoleResponse> {
-    console.log(request)
     await this.rolesService.update({ id, ...request })
     return new UpdateRoleResponse()
   }

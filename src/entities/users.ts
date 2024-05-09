@@ -27,8 +27,8 @@ export class User {
   })
   public status: UserStatus
 
-  @ManyToMany(() => Role)
-  @JoinTable({ name: 'user_roles'})
+  @ManyToMany(() => Role, { eager: true })
+  @JoinTable({ name: 'user_roles' })
   roles: Role[]
 
   @RelationId((user: User) => user.roles)
@@ -43,7 +43,7 @@ export class User {
 	@Column({ nullable: true })
 	avatarUrl?: string
 
-  get permissions(): string[] {
+  public get permissions(): string[] {
     return this.roles.flatMap(x => x.permissions)
   }
 }

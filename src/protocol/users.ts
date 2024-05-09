@@ -29,15 +29,15 @@ export class User implements protocol.User {
   })
   @IsUUID('4', { each: true })
   roleIds: string[]
-  
+
   @ApiProperty({ example: 'Head of department', required: false })
   @IsOptional()
   title?: string
-  
+
   @ApiProperty({ example: 'Financial', required: false })
   @IsOptional()
   department?: string
-  
+
   @ApiProperty({ example: 'https://pics.com/img.jpg', required: false })
   @IsOptional()
   avatarUrl?: string
@@ -56,9 +56,6 @@ export class CreateUserRequest implements protocol.CreateUserRequest {
   @IsEmail()
   email: string
 
-  @ApiProperty({ example: 'active' })
-  status: protocol.UserStatus
-
   @ApiProperty({
     type: String,
     isArray: true,
@@ -69,21 +66,22 @@ export class CreateUserRequest implements protocol.CreateUserRequest {
   })
   @IsUUID('4', { each: true })
   roleIds: string[]
-  
+
   @ApiProperty({ example: 'Head of department', required: false })
   @IsOptional()
   title?: string
-  
+
   @ApiProperty({ example: 'Financial', required: false })
   @IsOptional()
   department?: string
-  
+
   @ApiProperty({ example: 'https://pics.com/img.jpg', required: false })
   @IsOptional()
   avatarUrl?: string
 }
 
 export class CreateUserResponse implements protocol.CreateUserResponse {
+  id: string
 }
 
 
@@ -114,15 +112,15 @@ export class GetUserResponse implements protocol.GetUserResponse {
   })
   @IsUUID('4', { each: true })
   roleIds: string[]
-  
+
   @ApiProperty({ example: 'Head of department', required: false })
   @IsOptional()
   title?: string
-  
+
   @ApiProperty({ example: 'Financial', required: false })
   @IsOptional()
   department?: string
-  
+
   @ApiProperty({ example: 'https://pics.com/img.jpg', required: false })
   @IsOptional()
   avatarUrl?: string
@@ -162,15 +160,15 @@ export class UpdateUserRequest implements protocol.UpdateUserRequest {
   @IsUUID('4', { each: true })
   @IsOptional()
   roleIds?: string[]
-  
+
   @ApiProperty({ example: 'Head of department', required: false })
   @IsOptional()
   title?: string
-  
+
   @ApiProperty({ example: 'Financial', required: false })
   @IsOptional()
   department?: string
-  
+
   @ApiProperty({ example: 'https://pics.com/img.jpg', required: false })
   @IsOptional()
   avatarUrl?: string

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator'
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator'
 import * as protocol from '@classroom/protocol/CoursesService'
 
 // -- Models ----------------------------------------------------------------
@@ -78,15 +78,23 @@ export class GetCoursesResponse implements protocol.GetCoursesResponse {
 
 export class UpdateCourseRequest implements protocol.UpdateCourseRequest {
   @ApiPropertyOptional({ example: 'Bhakti-shastri' })
+  @IsString()
+  @IsOptional()
   title?: string
 
   @ApiPropertyOptional({ example: 'Become a pandit' })
+  @IsString()
+  @IsOptional()
   subtitle?: string
 
   @ApiPropertyOptional({ example: 'One year couse ...' })
+  @IsString()
+  @IsOptional()
   description?: string
 
   @ApiPropertyOptional({ example: 'https://images.com/cover.png' })
+  @IsString()
+  @IsOptional()
   coverImageUrl?: string
 }
 

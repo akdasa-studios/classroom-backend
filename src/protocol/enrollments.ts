@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsUUID } from 'class-validator'
+import { IsString, IsUUID } from 'class-validator'
 import * as protocol from '@classroom/protocol/EnrollmentsService'
 
 // -- Models ----------------------------------------------------------------
@@ -53,17 +53,15 @@ export class GetEnrollmentResponse implements protocol.GetEnrollmentResponse {
   @IsUUID(4, { each:true })
   id: string
 
-  @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @ApiProperty()
   @IsUUID(4, { each:true })
-  applicantId: string
+  applicant: any
 
-  @ApiPropertyOptional({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
-  @IsUUID(4, { each:true })
-  groupId?: string
+  @ApiPropertyOptional()
+  group?: any
 
   @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
-  @IsUUID(4, { each:true })
-  courseId: string
+  course: any
 
   @ApiProperty({
     enum: EnrollmentStatusValues 
@@ -74,7 +72,7 @@ export class GetEnrollmentResponse implements protocol.GetEnrollmentResponse {
 
 export class GetEnrollmentsResponse implements protocol.GetEnrollmentsResponse {
   @ApiProperty({ type: Enrollment, isArray: true })
-  items: Enrollment[]
+  items: any
 }
 
 
@@ -88,6 +86,12 @@ export class UpdateEnrollmentRequest implements protocol.UpdateEnrollmentRequest
   @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
   @IsUUID(4, { each:true })
   courseId?: string
+
+  @ApiProperty({
+    enum: EnrollmentStatusValues 
+  })
+  @IsString()
+  status: EnrollmentStatus
 }
 
 export class UpdateEnrollmentResponse implements protocol.UpdateEnrollmentResponse {
