@@ -45,8 +45,8 @@ export class GroupsController {
     @Param('id') id: string
   ): Promise<GetGroupResponse> {
     const group = await this.groupsService.findOne(id)
-    if (group) { 
-      return { 
+    if (group) {
+      return {
         ...group,
         startsAt: group.startsAt.toISOString()
       }
@@ -64,11 +64,13 @@ export class GroupsController {
   ): Promise<GetGroupsResponse> {
     const result = (query || courseId)
       ? this.groupsService.findByNameAndCourse(query, courseId)
-      : this.groupsService.findAll()
+      : this.groupsService.findAll({ relations: ['leader', 'course'] })
 
-    return { 
+    return {
       items: (await result).map(group => ({
         ...group,
+        leader: { id: group.leader.id, name: group.leader.name, avatarUrl: group.leader.avatarUrl },
+        course: { id: group.course.id, title: group.course.title },
         startsAt: group.startsAt.toISOString()
       }))
     }
@@ -83,9 +85,9 @@ export class GroupsController {
     @Param('id') id: string,
     @Body() request: UpdateGroupRequest
   ): Promise<UpdateGroupResponse> {
-    await this.groupsService.update({ 
-      id, ...request, 
-      leader:   { id: request.leaderId }, 
+    await this.groupsService.update({
+      id, ...request,
+      leader:   { id: request.leaderId },
       startsAt: request.startsAt ? new Date(request.startsAt) : undefined
     })
     return new UpdateGroupResponse()

@@ -100,7 +100,7 @@ export class GetGroupResponse implements protocol.GetGroupResponse {
 
 export class GetGroupsResponse implements protocol.GetGroupsResponse {
   @ApiProperty({ type: Group, isArray: true })
-  items: Group[]
+  items: Array<any> // TODO
 }
 
 

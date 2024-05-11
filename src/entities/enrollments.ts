@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, RelationId, ManyToO
 import { User, Group, Course } from '@classroom/admin/entities'
 import { IsUserExist } from '@classroom/admin/validation'
 
-const EnrollmentStatusValues = ['new', 'approved', 'declined', 'graduated'] as const
+const EnrollmentStatusValues = ['pending', 'approved', 'declined', 'graduated'] as const
 export type EnrollmentStatus = typeof EnrollmentStatusValues[number];
 
 @Entity('enrollments')
@@ -32,8 +32,17 @@ export class Enrollment {
   @Column({
     type: 'enum',
     enum: EnrollmentStatusValues,
-    default: 'new'
+    default: 'pending'
   })
   status: EnrollmentStatus
-}
 
+  @ManyToOne(() => User)
+  @JoinColumn()
+  declinedBy?: User
+
+  @RelationId((e: Enrollment) => e.declinedBy)
+  declinedById: string | null
+
+  @Column({ type: 'timestamp', nullable: true })
+  archivedAt: Date
+}

@@ -3,7 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm"
 import { JwtModule } from '@nestjs/jwt'
 import { Course, Enrollment, Group, Lesson, Role, User } from '@classroom/admin/entities'
 import { AuthService, CoursesService, EnrollmentsService, GroupsService, LessonsService, RolesService, UsersService } from '@classroom/admin/services'
-import { AuthController, CoursesController, EnrollmentsController, GroupsController, LessonsController, RolesController, UsersController, MediaController } from "@classroom/admin/controllers/v1"
+import { AuthController, CoursesController, EnrollmentsController, GroupsController, LessonsController, RolesController, UsersController, MediaController, ProfileController } from "@classroom/admin/controllers/v1"
 import { MulterModule } from "@nestjs/platform-express";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
@@ -17,7 +17,7 @@ const ENTITIES = [Course, Role, User, Group, Enrollment, Lesson]
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '30d' },
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -41,6 +41,7 @@ const ENTITIES = [Course, Role, User, Group, Enrollment, Lesson]
   ],
   controllers: [
     AuthController,
+    ProfileController,
     RolesController,
     UsersController,
     CoursesController,

@@ -1,10 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
 import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse } from '@nestjs/swagger'
 import { EnrollmentsService } from '@classroom/admin/services'
 import { CreateEnrollmentRequest, CreateEnrollmentResponse, GetEnrollmentResponse, GetEnrollmentsResponse, UpdateEnrollmentRequest, UpdateEnrollmentResponse } from '@classroom/admin/protocol'
+import { AuthGuard } from '@classroom/admin/guards'
+import { AuthenticatedUserId } from '@classroom/admin/decorators'
 
 @ApiTags('Enrollments')
 @Controller('enrollments')
+@UseGuards(AuthGuard)
 export class EnrollmentsController {
   constructor(
     private readonly enrollmentsService: EnrollmentsService
@@ -16,15 +19,16 @@ export class EnrollmentsController {
   @ApiCreatedResponse({ type: CreateEnrollmentResponse, description: 'The enrollment has been successfully created.' })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   async create(
-    @Body() request: CreateEnrollmentRequest
+    @Body() request: CreateEnrollmentRequest,
+    @AuthenticatedUserId() userId: AuthenticatedUserId,
   ): Promise<CreateEnrollmentResponse> {
     // TODO: check if group belongs to the course
-    const userId = '';
-    this.enrollmentsService.create({ 
+    this.enrollmentsService.create({
+      id:          request?.id,
       applicant:   { id: userId },
       group:       { id: request.groupId },
       course:      { id: request.courseId },
-      status:      'new',
+      status:      'pending',
     })
     return new CreateEnrollmentResponse()
   }
@@ -50,13 +54,17 @@ export class EnrollmentsController {
   @ApiOperation({ summary: 'Get enrollments list.' })
   @ApiOkResponse({ type: GetEnrollmentsResponse })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  public async findAll(): Promise<GetEnrollmentsResponse> {
-    return { items: (await this.enrollmentsService.findAll()).map(x => ({
-      id: x.id,
-      status: x.status,
-      applicant: { id: x.applicant.id, name:  x.applicant.name, avatarUrl: x.applicant.avatarUrl },
-      course:    { id: x.course.id,    title: x.course.title },
-      group:     x.group ? { id: x.group.id, name: x.group.name } : undefined,
+  public async findAll(
+    @AuthenticatedUserId() userId: AuthenticatedUserId
+  ): Promise<GetEnrollmentsResponse> {
+    console.log(userId)
+    return { items: (await this.enrollmentsService.findAllOfUser(userId)).map(x => ({
+      id:         x.id,
+      status:     x.status,
+      group:      x.group ? { id: x.group.id, name: x.group.name } : undefined,
+      declinedBy: x.declinedById ? x.declinedById : undefined,
+      applicant:  { id: x.applicant.id, name:  x.applicant.name, avatarUrl: x.applicant.avatarUrl },
+      course:     { id: x.course.id,    title: x.course.title },
     })) }
   }
 
@@ -71,12 +79,23 @@ export class EnrollmentsController {
   ): Promise<UpdateEnrollmentResponse> {
     // TODO: check ir group belongs ti the course
     console.log(request)
+    const userId = 'a243727d-57ab-4595-ba17-69f3a0679bf6' // TODO: get from token
     await this.enrollmentsService.update({
       id:     id,
-      course: { id: request.courseId },
-      group:  { id: request.groupId },
-      status: request.status
+      course: request.courseId ? { id: request.courseId } : undefined,
+      group:  request.groupId ? { id: request.groupId } : undefined,
+      status: request.status,
+      declinedBy: request.status === 'declined' ? { id: userId } : undefined
     })
+
     return new UpdateEnrollmentResponse()
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete enrollment.' })
+  async remove(
+    @Param('id') id: string
+  ): Promise<void> {
+    await this.enrollmentsService.archive(id)
   }
 }

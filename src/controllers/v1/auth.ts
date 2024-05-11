@@ -1,4 +1,4 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common'
+import { Body, Controller, Post, HttpCode, HttpStatus, UnauthorizedException } from '@nestjs/common'
 import { AuthService } from '@classroom/admin/services'
 import { AuthRequest, AuthResponse } from '@classroom/admin/protocol'
 
@@ -7,16 +7,22 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Post()
+  @Post('/email')
   async signIn(
     @Body() request: AuthRequest
   ): Promise<AuthResponse> {
     if (!request.code) {
-      this.authService.requestCode(request.email)
+      await this.authService.requestCode(request.email)
       return new AuthResponse()
     } else {
-      const token = await this.authService.validateCode(request.email, request.code)
-      return { access_token: token }
+      if (!this.authService.validateCode(request.email, request.code)) {
+        throw new UnauthorizedException()
+      }
+
+      const user = await this.authService.getOrCreateUser(request.email)
+      const token = await this.authService.createToken(user)
+
+      return { accessToken: token }
     }
   }
 }

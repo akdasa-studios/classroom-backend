@@ -14,5 +14,5 @@ export class AuthRequest implements protocol.AuthRequest {
 }
 
 export class AuthResponse implements protocol.AuthResponse {
-  access_token: string
+  accessToken: string
 }

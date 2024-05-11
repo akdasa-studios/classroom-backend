@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsString, IsUUID } from 'class-validator'
+import { IsISO8601, IsOptional, IsString, IsUUID } from 'class-validator'
 import * as protocol from '@classroom/protocol/EnrollmentsService'
 
 // -- Models ----------------------------------------------------------------
 
-const EnrollmentStatusValues = ['new', 'approved', 'declined', 'graduated'] as const
+const EnrollmentStatusValues = ['pending', 'approved', 'declined', 'graduated'] as const
 export type EnrollmentStatus = typeof EnrollmentStatusValues[number];
 
 export class Enrollment implements protocol.Enrollment {
@@ -25,7 +25,7 @@ export class Enrollment implements protocol.Enrollment {
   courseId: string
 
   @ApiProperty({
-    enum: EnrollmentStatusValues 
+    enum: EnrollmentStatusValues
   })
   status: EnrollmentStatus
 }
@@ -34,6 +34,11 @@ export class Enrollment implements protocol.Enrollment {
 
 export class CreateEnrollmentRequest implements protocol.CreateEnrollmentRequest {
   @ApiPropertyOptional({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @IsUUID(4)
+  id?: string
+
+  @ApiPropertyOptional({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @IsOptional()
   @IsUUID(4)
   groupId?: string
 
@@ -64,7 +69,7 @@ export class GetEnrollmentResponse implements protocol.GetEnrollmentResponse {
   course: any
 
   @ApiProperty({
-    enum: EnrollmentStatusValues 
+    enum: EnrollmentStatusValues
   })
   status: EnrollmentStatus
 }
@@ -80,18 +85,21 @@ export class GetEnrollmentsResponse implements protocol.GetEnrollmentsResponse {
 
 export class UpdateEnrollmentRequest implements protocol.UpdateEnrollmentRequest {
   @ApiPropertyOptional({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
-  @IsUUID(4, { each:true })
+  @IsOptional()
+  @IsUUID(4)
   groupId?: string
 
   @ApiProperty({ example: '6eb216f2-543d-4f15-88f5-f325a1bdcafd' })
+  @IsOptional()
   @IsUUID(4, { each:true })
   courseId?: string
 
   @ApiProperty({
-    enum: EnrollmentStatusValues 
+    enum: EnrollmentStatusValues
   })
+  @IsOptional()
   @IsString()
-  status: EnrollmentStatus
+  status?: EnrollmentStatus
 }
 
 export class UpdateEnrollmentResponse implements protocol.UpdateEnrollmentResponse {

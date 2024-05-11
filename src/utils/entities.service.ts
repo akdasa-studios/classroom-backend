@@ -1,4 +1,4 @@
-import { DeepPartial, In, ObjectLiteral, Repository, Raw } from 'typeorm'
+import { DeepPartial, In, ObjectLiteral, Repository, Raw, FindManyOptions } from 'typeorm'
 import { validate } from 'class-validator'
 
 export class ValidationError extends Error {
@@ -42,8 +42,8 @@ export class EntitiesService<
     return await this.repository.findOneBy({ id })
   }
 
-  async findAll() {
-    return await this.repository.find()
+  async findAll(options: FindManyOptions<TEntity> = {}) {
+    return await this.repository.find(options)
   }
 
   async update(request: DeepPartial<TEntity>) {
@@ -51,9 +51,9 @@ export class EntitiesService<
   }
 
   async findMany(id: string[]) {
-    return await this.repository.find({ 
+    return await this.repository.find({
       // @ts-ignore
-      where: { id: In([...id || []]) } 
+      where: { id: In([...id || []]) }
     })
   }
 }
