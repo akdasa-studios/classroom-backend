@@ -8,27 +8,32 @@ import { MulterModule } from "@nestjs/platform-express";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { jwtConstants } from "./configs"
+import { ConfigModule, ConfigService } from "@nestjs/config"
 
 const ENTITIES = [Course, Role, User, Group, Enrollment, Lesson, Session]
 
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '20s' },
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'classroom',
-      password: 'classroom',
-      database: 'classroom',
-      entities: ENTITIES,
-      synchronize: true, // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
-      // logging: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DATABASE_HOST', 'localhost'),
+        port: +configService.get<number>('DATABASE_PORT', 5432),
+        username: configService.get<string>('DATABASE_USERNAME', 'classroom'),
+        password: configService.get<string>('DATABASE_PASSWORD', 'classroom'),
+        database: configService.get<string>('DATABASE_NAME', 'classroom'),
+        entities: ENTITIES,
+        synchronize: true,
+      }),
+      inject: [ConfigService],
     }),
     TypeOrmModule.forFeature(ENTITIES),
     MulterModule.register({
