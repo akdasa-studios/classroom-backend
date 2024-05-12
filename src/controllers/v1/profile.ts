@@ -5,14 +5,14 @@ import { AuthGuard } from '@classroom/admin/guards'
 import { AuthenticatedUserId } from '@classroom/admin/decorators'
 
 @Controller('profile')
+@UseGuards(AuthGuard)
 export class ProfileController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async get(
-    @AuthenticatedUserId() userId: AuthenticatedUserId
+    @AuthenticatedUserId() userId: string
   ): Promise<GetProfileResponse> {
     const user = await this.usersService.findOne(userId)
     if (user && user.status === 'active') {
@@ -23,11 +23,10 @@ export class ProfileController {
   }
 
   @Patch()
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async update(
     @Body() request: UpdateProfileRequest,
-    @AuthenticatedUserId() userId: AuthenticatedUserId,
+    @AuthenticatedUserId() userId: string,
   ): Promise<UpdateProfileResponse> {
     const user = await this.usersService.findOne(userId)
     if (!user) throw new NotFoundException()

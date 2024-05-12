@@ -1,11 +1,13 @@
-import { Body, Controller, Get, NotFoundException, Param, Patch, Post, Query, UnprocessableEntityException } from '@nestjs/common'
+import { Body, Controller, Get, NotFoundException, Param, Patch, Post, Query, UnprocessableEntityException, UseGuards } from '@nestjs/common'
 import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse, ApiUnprocessableEntityResponse } from '@nestjs/swagger'
 import { GroupsService } from '@classroom/admin/services'
 import { CreateGroupRequest, CreateGroupResponse, GetGroupResponse, GetGroupsResponse, UpdateGroupRequest, UpdateGroupResponse } from '@classroom/admin/protocol'
 import { ValidationError } from '@classroom/admin/utils/entities.service'
+import { AuthGuard } from '@classroom/admin/guards'
 
 @ApiTags('Groups')
 @Controller('groups')
+@UseGuards(AuthGuard)
 export class GroupsController {
   constructor(
     private readonly groupsService: GroupsService

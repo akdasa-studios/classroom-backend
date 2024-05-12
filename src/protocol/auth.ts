@@ -15,4 +15,14 @@ export class AuthRequest implements protocol.AuthRequest {
 
 export class AuthResponse implements protocol.AuthResponse {
   accessToken: string
+  refreshToken: string
+}
+
+export class RefreshTokenRequest implements protocol.RefreshTokenRequest {
+  refreshToken: string
+}
+
+export class RefreshTokenResponse implements protocol.RefreshTokenResponse {
+  accessToken: string
+  refreshToken: string
 }

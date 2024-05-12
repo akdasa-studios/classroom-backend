@@ -38,9 +38,14 @@ export class AuthService {
     })
   }
 
-  async createToken(
+  async createAccessToken(
     user: User
   ) {
-    return await this.jwtService.signAsync({ sub: user.id })
+    return await this.jwtService.signAsync({
+      sub: user.id,
+      permissions: user.permissions
+    }, {
+      expiresIn: '20s'
+    })
   }
 }

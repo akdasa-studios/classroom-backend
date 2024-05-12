@@ -1,9 +1,11 @@
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
+import { Controller, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { ApiTags, ApiBody, ApiConsumes } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@classroom/admin/guards';
 
 @ApiTags('Media')
 @Controller('media')
+@UseGuards(AuthGuard)
 export class MediaController {
   constructor() {}
 

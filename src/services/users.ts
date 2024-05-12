@@ -32,9 +32,9 @@ export class UsersService extends EntitiesService<User> {
     ]
     return await this.repository.find({
       relations: { roles: true },
-      where: { 
+      where: {
         name: name ?Raw((alias) => `LOWER(${alias}) Like LOWER(:value)`, { value: `%${name}%`, }) : undefined,
-        roles: { permissions: ArrayContainedBy(adminPermissions) } 
+        roles: { permissions: ArrayContainedBy(adminPermissions) }
       }
     })
   }

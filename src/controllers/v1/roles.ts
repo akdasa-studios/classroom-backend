@@ -1,11 +1,13 @@
-import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Post, UnprocessableEntityException } from '@nestjs/common'
+import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Post, UnprocessableEntityException, UseGuards } from '@nestjs/common'
 import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse } from '@nestjs/swagger'
 import { RolesService } from '@classroom/admin/services'
 import { CreateRoleRequest, CreateRoleResponse, GetRoleResponse, GetRolesResponse, UpdateRoleRequest, UpdateRoleResponse } from '@classroom/admin/protocol'
 import { ValidationError } from '@classroom/admin/utils/entities.service'
+import { AuthGuard } from '@classroom/admin/guards'
 
 @ApiTags('Roles')
 @Controller('roles')
+@UseGuards(AuthGuard)
 export class RolesController {
   constructor(
     private readonly rolesService: RolesService

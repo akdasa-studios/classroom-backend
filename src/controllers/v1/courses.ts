@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
 import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiForbiddenResponse } from '@nestjs/swagger'
 import { CoursesService } from '@classroom/admin/services'
 import { CreateCourseRequest, CreateCourseResponse, GetCourseResponse, GetCoursesResponse, UpdateCourseRequest, UpdateCourseResponse } from '@classroom/admin/protocol'
+import { AuthGuard } from '@classroom/admin/guards'
 
 @ApiTags('Courses')
 @Controller('courses')
+@UseGuards(AuthGuard)
 export class CoursesController {
   constructor(
     private readonly coursesService: CoursesService

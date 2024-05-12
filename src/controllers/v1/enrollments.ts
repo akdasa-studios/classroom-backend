@@ -3,7 +3,7 @@ import { ApiTags, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiF
 import { EnrollmentsService } from '@classroom/admin/services'
 import { CreateEnrollmentRequest, CreateEnrollmentResponse, GetEnrollmentResponse, GetEnrollmentsResponse, UpdateEnrollmentRequest, UpdateEnrollmentResponse } from '@classroom/admin/protocol'
 import { AuthGuard } from '@classroom/admin/guards'
-import { AuthenticatedUserId } from '@classroom/admin/decorators'
+import { AuthScope, AuthenticatedUserId } from '@classroom/admin/decorators'
 
 @ApiTags('Enrollments')
 @Controller('enrollments')
@@ -20,7 +20,7 @@ export class EnrollmentsController {
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   async create(
     @Body() request: CreateEnrollmentRequest,
-    @AuthenticatedUserId() userId: AuthenticatedUserId,
+    @AuthenticatedUserId() userId: string,
   ): Promise<CreateEnrollmentResponse> {
     // TODO: check if group belongs to the course
     this.enrollmentsService.create({
@@ -55,17 +55,23 @@ export class EnrollmentsController {
   @ApiOkResponse({ type: GetEnrollmentsResponse })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   public async findAll(
-    @AuthenticatedUserId() userId: AuthenticatedUserId
+    @AuthScope() scope: string,
+    @AuthenticatedUserId() userId: string
   ): Promise<GetEnrollmentsResponse> {
-    console.log(userId)
-    return { items: (await this.enrollmentsService.findAllOfUser(userId)).map(x => ({
-      id:         x.id,
-      status:     x.status,
-      group:      x.group ? { id: x.group.id, name: x.group.name } : undefined,
-      declinedBy: x.declinedById ? x.declinedById : undefined,
-      applicant:  { id: x.applicant.id, name:  x.applicant.name, avatarUrl: x.applicant.avatarUrl },
-      course:     { id: x.course.id,    title: x.course.title },
-    })) }
+    const items = scope === 'admin'
+      ? await this.enrollmentsService.findAll({ relations: { applicant: true, course: true, group: true } })
+      : await this.enrollmentsService.findAllOfUser(userId)
+
+    return {
+      items: items.map(x => ({
+        id:         x.id,
+        status:     x.status,
+        group:      x.group ? { id: x.group.id, name: x.group.name } : undefined,
+        declinedBy: x.declinedById ? x.declinedById : undefined,
+        applicant:  { id: x.applicant.id, name:  x.applicant.name, avatarUrl: x.applicant.avatarUrl },
+        course:     { id: x.course.id,    title: x.course.title },
+      }))
+    }
   }
 
   @Patch(':id')
@@ -75,11 +81,10 @@ export class EnrollmentsController {
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   async update(
     @Param('id') id: string,
-    @Body() request: UpdateEnrollmentRequest
+    @Body() request: UpdateEnrollmentRequest,
+    @AuthenticatedUserId() userId: string,
   ): Promise<UpdateEnrollmentResponse> {
     // TODO: check ir group belongs ti the course
-    console.log(request)
-    const userId = 'a243727d-57ab-4595-ba17-69f3a0679bf6' // TODO: get from token
     await this.enrollmentsService.update({
       id:     id,
       course: request.courseId ? { id: request.courseId } : undefined,
