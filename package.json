@@ -74,8 +74,8 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^@classroom/admin/(.*)": "<rootDir>/src/$1",
-      "^@classroom/protocol/(.*)": "<rootDir>/submodules/protocol/lib/$1"
+      "^@classroom/backend/(.*)": "<rootDir>/modules/backend/$1",
+      "^@classroom/protocol/(.*)": "<rootDir>/modules/protocol/lib/$1"
     }
   }
 }

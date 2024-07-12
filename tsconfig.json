@@ -19,12 +19,12 @@
     "noFallthroughCasesInSwitch": false,
 
     "paths": {
-      "@classroom/admin/*":    ["./src/*"],
-      "@classroom/protocol/*": ["./submodules/protocol/lib/*"]
+      "@classroom/backend/*":    ["./modules/backend/*"],
+      "@classroom/protocol/*": ["./modules/protocol/lib/*"]
     }
   },
   "include": [
-    "src/**/*.ts",
-    "submodules/protocol/lib/**/*.ts"
+    "modules/backend/**/*.ts",
+    "modules/protocol/lib/**/*.ts"
   ]
 }

@@ -2,8 +2,8 @@ import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { useContainer } from 'class-validator'
 import * as request from 'supertest'
-import { RolesService } from '../src/org/roles/roles.service'
-import { AppModule } from '../src/app.module'
+import { RolesService } from '@classroom/backend/org/roles/roles.service'
+import { AppModule } from '@classroom/backend/src/app.module'
 
 function validationError(
   ...messages: string[]
