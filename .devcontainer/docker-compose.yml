@@ -12,6 +12,10 @@ services:
         - GROUP_NAME=${DEVCONTAINER_GROUP_NAME:-dev}
     expose:
       - 3000
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_HOST=database
     depends_on:
       - database
     networks:

@@ -18,7 +18,7 @@ RUN    getent group ${GROUP_ID} || groupadd --gid ${GROUP_ID} ${GROUP_NAME} \
 USER ${USER_ID}:${GROUP_ID}
 
 # Copy files
-WORKDIR /akd-studios/classroom/classroom-backend
+WORKDIR /akd-studios/classroom/backend
 COPY --chown=${USER_ID}:${GROUP_ID} . .
 RUN npm i
 

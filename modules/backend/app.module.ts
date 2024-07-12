@@ -1,14 +1,14 @@
-import { Module } from "@nestjs/common"
-import { TypeOrmModule } from "@nestjs/typeorm"
+import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { JwtModule } from '@nestjs/jwt'
 import { Course, Enrollment, Group, Lesson, Role, Session, User } from '@classroom/backend/entities'
 import { AuthService, CoursesService, EnrollmentsService, GroupsService, LessonsService, RolesService, SessionsService, UsersService } from '@classroom/backend/services'
-import { AuthController, CoursesController, EnrollmentsController, GroupsController, LessonsController, RolesController, UsersController, MediaController, ProfileController } from "@classroom/backend/controllers/v1"
-import { MulterModule } from "@nestjs/platform-express";
-import { ServeStaticModule } from "@nestjs/serve-static";
-import { join } from "path";
-import { jwtConstants } from "./configs"
-import { ConfigModule, ConfigService } from "@nestjs/config"
+import { AuthController, CoursesController, EnrollmentsController, GroupsController, LessonsController, RolesController, UsersController, MediaController, ProfileController } from '@classroom/backend/controllers/v1'
+import { MulterModule } from '@nestjs/platform-express'
+import { ServeStaticModule } from '@nestjs/serve-static'
+import { join } from 'path'
+import { jwtConstants } from './configs'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 
 const ENTITIES = [Course, Role, User, Group, Enrollment, Lesson, Session]
 

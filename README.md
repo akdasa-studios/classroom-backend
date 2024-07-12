@@ -1,3 +1,8 @@
+## Development
+
+
+Execute `npm run start:dev` command in the terminal. Open `http://localhost:3000/api/` to access _api_.
+
 ## Enviroment variables
 
 | Variable          | Description | Default    |
